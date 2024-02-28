@@ -65,10 +65,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "ng-ai-google-demo:build:production"
+              "buildTarget": "ng-ai-google-demo:build:production"
             },
             "development": {
-              "browserTarget": "ng-ai-google-demo:build:development"
+              "buildTarget": "ng-ai-google-demo:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -76,7 +76,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "ng-ai-google-demo:build"
+            "buildTarget": "ng-ai-google-demo:build"
           }
         },
         "test": {
