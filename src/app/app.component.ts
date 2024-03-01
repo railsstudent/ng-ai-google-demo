@@ -1,21 +1,34 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { setTitle } from './utils/title.util';
+import { GenerateTextComponent } from './gemini/generate-text/generate-text.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  template: `<div>Testing</div>`,
-  styles: ``,
+  imports: [GenerateTextComponent],
+  template: `
+    <div>
+      <h2>{{ title }}</h2>
+      <app-generate-text />
+    </div>
+  `,
+  styles: `
+    div {
+      padding: 1rem;
+    }
+
+    h2 {
+      margin-bottom: 0.5rem;
+    }
+  `,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent implements OnInit {
-  title = 'ng-ai-google-demo';
+  title = 'Gemini AI Generate Text Demo';
 
   constructor() {
     setTitle();
   }
-
-  apiKey = 'AIzaSyD-lmkdh4pTPWib0VM1JxEbPHfsroyGGvs';
 
   ngOnInit(): void {
     // throw new Error('Method not implemented.');
