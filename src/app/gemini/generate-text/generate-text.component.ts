@@ -2,31 +2,32 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MarkdownComponent } from 'ngx-markdown';
-import { NEVER, scan, switchMap, tap } from 'rxjs';
-import { GeminiService } from '../services/gemini.service';
+import { NEVER, scan, switchMap } from 'rxjs';
 import { ChatItem } from '../interfaces/chat-history.interface';
+import { GeminiService } from '../services/gemini.service';
 
 @Component({
   selector: 'app-generate-text',
   standalone: true,
   imports: [FormsModule, MarkdownComponent],
   template: `
-    <p>Input a prompt to receive an answer from Google Gemini AI</p>
+    <h3>Input a prompt to receive an answer from Google Gemini AI</h3>
     <div>
       <textarea rows="8" [(ngModel)]="text"></textarea>
       <button (click)="prompt.set(text)">Ask me anything</button>
     </div>
-    <!-- <markdown class="markdown" [data]="markdown"></markdown> -->
+    <h3>Chat History</h3>
     @if (chatHistory().length > 0) {
       <ol>
         @for (history of chatHistory(); track history) {
           <li>
             <p>{{ history.prompt }}</p>
             <markdown [data]="history.response" />
-            <!-- <p>Response: {{ history.response }}</p> -->
           </li>
         }
       </ol>
+    } @else {
+      <p>No history</p>
     }
   `,
   styles: `
@@ -42,12 +43,6 @@ import { ChatItem } from '../interfaces/chat-history.interface';
     button {
         padding: 0.65rem;
         border-radius: 8px;
-    }
-
-    .markdown {
-      margin-top: 1rem;
-      margin-right: 1rem;
-      width: 50%;
     }
 
     ol {
