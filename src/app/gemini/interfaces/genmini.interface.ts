@@ -1,5 +1,5 @@
-import { HARM_CATEGORY } from './enums/harm-category.enum';
-import { THRESHOLD } from './enums/threshold.enum'
+import { HARM_CATEGORY } from '../enums/harm-category.enum';
+import { THRESHOLD } from '../enums/threshold.enum'
 
 export interface GeminiConfig {
     maxOutputTokens: number,

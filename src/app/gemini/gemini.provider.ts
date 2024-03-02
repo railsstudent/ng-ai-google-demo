@@ -10,7 +10,7 @@ export function provideGeminiApi(): EnvironmentProviders {
     return makeEnvironmentProviders([
         {
             provide: GEMINI_API_KEY,
-            useValue: '<api key>',
+            useValue: 'AIzaSyBuh9QG0XDwEoFbYAuibca6OriTOczkOp8',
         },
         {
             provide: GEMINI_GENERATION_CONFIG,
@@ -51,14 +51,14 @@ export function provideGeminiApi(): EnvironmentProviders {
                 }
 
                 const apiKey = inject(GEMINI_API_KEY);
-                return `${genAIBase}/models/gemini-pro:generateContent?key=${apiKey}`;
+                return `${genAIBase}/gemini-pro:generateContent?key=${apiKey}`;
             }
         },
         {
             provide: GEMINI_PRO_VISION_URL,
             useFactory: () => {
                 const apiKey = inject(GEMINI_API_KEY);
-                return `${genAIBase}/models/gemini-pro:gemini-pro-vision?key=${apiKey}`;
+                return `${genAIBase}/gemini-pro:gemini-pro-vision?key=${apiKey}`;
             }
         },
     ]);

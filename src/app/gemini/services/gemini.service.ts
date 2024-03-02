@@ -1,49 +1,44 @@
-import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { GEMINI_PRO_URL } from '../gemini.constant';
+import { Injectable, inject } from '@angular/core';
+import { Observable, catchError, map, of, tap } from 'rxjs';
+import { GEMINI_GENERATION_CONFIG, GEMINI_PRO_URL, GEMINI_SAFETY_SETTINGS } from '../gemini.constant';
+import { GeminiResponse } from '../interfaces/generate-response.interface';
 
 @Injectable({
   providedIn: 'root'
 })
 export class GeminiService {
   private readonly geminiProUrl = inject(GEMINI_PRO_URL);
+  private readonly generationConfig = inject(GEMINI_GENERATION_CONFIG);
+  private readonly safetySetting = inject(GEMINI_SAFETY_SETTINGS);
   private httpClient = inject(HttpClient);
 
-  generateText() {
-    this.httpClient.post(this.geminiProUrl, {
+  generateText(prompt: string): Observable<string> {
+    return this.httpClient.post<GeminiResponse>(this.geminiProUrl, {
       "contents": [
         {
             "role": "user",
-            "parts": []
+            "parts": [
+              {
+                  "text": prompt
+              }
+          ]
         }
       ],
-      "generation_config": {
-          "maxOutputTokens": 1024,
-          "temperature": 0.9,
-          "topP": 1
-      },
-      "safetySettings": [
-          {
-              "category": "HARM_CATEGORY_HATE_SPEECH",
-              "threshold": "BLOCK_MEDIUM_AND_ABOVE"
-          },
-          {
-              "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
-              "threshold": "BLOCK_MEDIUM_AND_ABOVE"
-          },
-          {
-              "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-              "threshold": "BLOCK_MEDIUM_AND_ABOVE"
-          },
-          {
-              "category": "HARM_CATEGORY_HARASSMENT",
-              "threshold": "BLOCK_MEDIUM_AND_ABOVE"
-          }
-      ]
+      "generation_config": this.generationConfig,
+      "safetySettings": this.safetySetting
     }, {
       headers: {
         "Content-Type": "application/json"
       }
     })
+    .pipe(
+      tap((response) => console.log(response)),
+      map((response) => response.candidates?.[0].content?.parts?.[0].text || 'No response' ),
+      catchError((err) => {
+        console.error(err);
+        return of('Error occurs');
+      })
+    );
   } 
 }

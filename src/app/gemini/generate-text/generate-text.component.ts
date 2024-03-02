@@ -1,19 +1,33 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { MarkdownComponent } from 'ngx-markdown';
+import { NEVER, scan, switchMap, tap } from 'rxjs';
+import { GeminiService } from '../services/gemini.service';
+import { ChatItem } from '../interfaces/chat-history.interface';
 
 @Component({
   selector: 'app-generate-text',
   standalone: true,
   imports: [FormsModule, MarkdownComponent],
   template: `
-    <p>Input a prompt to receive an answer from AI</p>
+    <p>Input a prompt to receive an answer from Google Gemini AI</p>
     <div>
-      <textarea rows="8" [(ngModel)]="prompt"></textarea>
-      <button>Ask me anything</button>
+      <textarea rows="8" [(ngModel)]="text"></textarea>
+      <button (click)="prompt.set(text)">Ask me anything</button>
     </div>
-    <markdown class="markdown" [data]="markdown"></markdown>
-    prompt: {{ prompt() }}
+    <!-- <markdown class="markdown" [data]="markdown"></markdown> -->
+    @if (chatHistory().length > 0) {
+      <ol>
+        @for (history of chatHistory(); track history) {
+          <li>
+            <p>{{ history.prompt }}</p>
+            <markdown [data]="history.response" />
+            <!-- <p>Response: {{ history.response }}</p> -->
+          </li>
+        }
+      </ol>
+    }
   `,
   styles: `
     textarea {
@@ -43,73 +57,15 @@ import { MarkdownComponent } from 'ngx-markdown';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GenerateTextComponent {
+  geminiService = inject(GeminiService);
   prompt = signal('');
+  text = '';
 
-  markdown = `## Markdown __rulez__!
-  ---
-  
-  ### Syntax highlight
-  \`\`\`typescript
-  const language = 'typescript';
-  \`\`\`
-  
-  ### Lists
-  1. Ordered list
-  2. Another bullet point
-     - Unordered list
-     - Another unordered bullet
-  
-  ### Blockquote
-  > Blockquote to the max`;
+  chatHistory = toSignal(toObservable(this.prompt)
+    .pipe(
+      switchMap((prompt) =>
+        prompt !== '' ? this.geminiService.generateText(prompt) : NEVER
+      ),
+      scan((acc, response) => acc.concat({ prompt: this.prompt(), response }), [] as ChatItem[]),
+    ), { initialValue: [] as ChatItem[] });
 }
-
-
-// cat << EOF > request.json
-// {
-//     "contents": [
-//         {
-//             "role": "user",
-//             "parts": [
-//                 {
-//                     "text": "What is the color of a mango"
-//                 }
-//             ]
-//         }
-//     ],
-//     "generation_config": {
-//         "maxOutputTokens": 1024,
-//         "temperature": 0.5,
-//         "topP": 1,
-//         "topK": 20
-//     },
-//     "safetySettings": [
-//         {
-//             "category": "HARM_CATEGORY_HATE_SPEECH",
-//             "threshold": "BLOCK_MEDIUM_AND_ABOVE"
-//         },
-//         {
-//             "category": "HARM_CATEGORY_DANGEROUS_CONTENT",
-//             "threshold": "BLOCK_MEDIUM_AND_ABOVE"
-//         },
-//         {
-//             "category": "HARM_CATEGORY_SEXUALLY_EXPLICIT",
-//             "threshold": "BLOCK_MEDIUM_AND_ABOVE"
-//         },
-//         {
-//             "category": "HARM_CATEGORY_HARASSMENT",
-//             "threshold": "BLOCK_MEDIUM_AND_ABOVE"
-//         }
-//     ]
-// }
-// EOF
-
-// API_ENDPOINT="us-central1-aiplatform.googleapis.com"
-// PROJECT_ID="generative-ai-408405"
-// MODEL_ID="gemini-1.0-pro-001"
-// LOCATION_ID="us-central1"
-
-// curl \
-// -X POST \
-// -H "Authorization: Bearer $(gcloud auth print-access-token)" \
-// -H "Content-Type: application/json" \
-// "https://${API_ENDPOINT}/v1/projects/${PROJECT_ID}/locations/${LOCATION_ID}/publishers/google/models/${MODEL_ID}:streamGenerateContent" -d '@request.json'
