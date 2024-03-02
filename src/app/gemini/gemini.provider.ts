@@ -10,7 +10,7 @@ export function provideGeminiApi(): EnvironmentProviders {
     return makeEnvironmentProviders([
         {
             provide: GEMINI_API_KEY,
-            useValue: 'AIzaSyBuh9QG0XDwEoFbYAuibca6OriTOczkOp8',
+            useValue: '<api key>',
         },
         {
             provide: GEMINI_GENERATION_CONFIG,
