@@ -5,11 +5,12 @@ import { MarkdownComponent } from 'ngx-markdown';
 import { NEVER, scan, switchMap } from 'rxjs';
 import { ChatItem } from '../interfaces/chat-history.interface';
 import { GeminiService } from '../services/gemini.service';
+import { LineBreakPipe } from '../pipes/line-break.pipe';
 
 @Component({
   selector: 'app-generate-text',
   standalone: true,
-  imports: [FormsModule, MarkdownComponent],
+  imports: [FormsModule, MarkdownComponent, LineBreakPipe],
   template: `
     <h3>Input a prompt to receive an answer from Google Gemini AI</h3>
     <div>
@@ -22,7 +23,7 @@ import { GeminiService } from '../services/gemini.service';
         @for (history of chatHistory(); track history) {
           <li>
             <p>{{ history.prompt }}</p>
-            <markdown [data]="history.response" />
+            <markdown [data]="lineBreakPipe.transform(history.response)" />
           </li>
         }
       </ol>
@@ -34,6 +35,9 @@ import { GeminiService } from '../services/gemini.service';
     textarea {
       margin-right: 0.5rem;
       width: 49%;
+      font-size: 1rem;
+      padding: 0.75rem;
+      border-radius: 4px;
     }
 
     p {
@@ -55,6 +59,7 @@ export class GenerateTextComponent {
   geminiService = inject(GeminiService);
   prompt = signal('');
   text = '';
+  lineBreakPipe = new LineBreakPipe();
 
   chatHistory = toSignal(toObservable(this.prompt)
     .pipe(
