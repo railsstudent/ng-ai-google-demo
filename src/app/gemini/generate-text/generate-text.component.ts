@@ -21,6 +21,10 @@ import { MarkdownComponent } from 'ngx-markdown';
       width: 49%;
     }
 
+    p {
+      font-size: 1.25rem;
+    }
+
     button {
         padding: 0.65rem;
         border-radius: 8px;
