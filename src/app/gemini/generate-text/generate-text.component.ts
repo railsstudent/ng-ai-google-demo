@@ -1,35 +1,23 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { AsyncPipe } from '@angular/common';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { MarkdownComponent } from 'ngx-markdown';
-import { NEVER, scan, switchMap } from 'rxjs';
-import { ChatItem } from '../interfaces/chat-history.interface';
+import { filter, finalize, scan, switchMap, tap } from 'rxjs';
+import { ChatHistoryComponent } from '../chat-history/chat-history.component';
+import { HistoryItem } from '../interfaces/history-item.interface';
 import { GeminiService } from '../services/gemini.service';
-import { LineBreakPipe } from '../pipes/line-break.pipe';
 
 @Component({
   selector: 'app-generate-text',
   standalone: true,
-  imports: [FormsModule, MarkdownComponent, LineBreakPipe],
+  imports: [FormsModule, ChatHistoryComponent],
   template: `
     <h3>Input a prompt to receive an answer from Google Gemini AI</h3>
     <div>
       <textarea rows="8" [(ngModel)]="text"></textarea>
-      <button (click)="prompt.set(text)">Ask me anything</button>
+      <button (click)="prompt.set(text)" [disabled]="loading()">{{ buttonText() }}</button>
     </div>
-    <h3>Chat History</h3>
-    @if (chatHistory().length > 0) {
-      <ol>
-        @for (history of chatHistory(); track history) {
-          <li>
-            <p>{{ history.prompt }}</p>
-            <markdown [data]="lineBreakPipe.transform(history.response)" />
-          </li>
-        }
-      </ol>
-    } @else {
-      <p>No history</p>
-    }
+    <app-chat-history [chatHistory]="chatHistory()" />
   `,
   styles: `
     textarea {
@@ -40,17 +28,9 @@ import { LineBreakPipe } from '../pipes/line-break.pipe';
       border-radius: 4px;
     }
 
-    p {
-      font-size: 1.25rem;
-    }
-
     button {
         padding: 0.65rem;
         border-radius: 8px;
-    }
-
-    ol {
-      margin: 1rem;
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -58,14 +38,18 @@ import { LineBreakPipe } from '../pipes/line-break.pipe';
 export class GenerateTextComponent {
   geminiService = inject(GeminiService);
   prompt = signal('');
+  loading = signal(false);
   text = '';
-  lineBreakPipe = new LineBreakPipe();
+
+  buttonText = computed(() => this.loading() ? 'Processing' : 'Ask me anything');
 
   chatHistory = toSignal(toObservable(this.prompt)
     .pipe(
-      switchMap((prompt) =>
-        prompt !== '' ? this.geminiService.generateText(prompt) : NEVER
+      filter((prompt) => prompt !== ''),
+      tap(() => this.loading.set(true)),
+      switchMap((prompt) => 
+        this.geminiService.generateText(prompt).pipe(finalize(() => this.loading.set(false)))
       ),
-      scan((acc, response) => acc.concat({ prompt: this.prompt(), response }), [] as ChatItem[]),
-    ), { initialValue: [] as ChatItem[] });
+      scan((acc, response) => acc.concat({ prompt: this.prompt(), response }), [] as HistoryItem[]),
+    ), { initialValue: [] as HistoryItem[] });
 }
