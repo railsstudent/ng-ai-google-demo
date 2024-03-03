@@ -6,18 +6,25 @@ Call Gemini REST API to generate text from text input
 
 Go to https://aistudio.google.com/app/apikey to create an API key for a new or existing Google Cloud project
 
-# Replace API Key
+# Replace the API Key
 
-- Go to src/app/gemini/gemini.provider.ts
+- (first time) chmod a+x ./generate-config-file.sh
+- execute the shell script to generate the API key in src/assets/config.json
 
-```typescript
- {
-    provide: GEMINI_API_KEY,
-    useValue: '<api key>',
-},
+```sh
+./generate-config-file.sh  <Gemini api key>
 ```
 
--  Replace &lt;api key&gt; with the actual Gemini API Key
+# Compile codes to deploy to github page
+
+- switch to gh-pages branch
+- (first time) chmod a+x ./deploy-github-page.sh
+- execute the shell script to compiles to docs/ folder
+
+```sh
+./deploy-github-page.sh  <Gemini api key>
+```
+- commit and push the codes the remote repository
 
 ## Development server
 
