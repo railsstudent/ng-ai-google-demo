@@ -1,15 +1,15 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
 import { setTitle } from './utils/title.util';
-import { GenerateTextComponent } from './gemini/generate-text/generate-text.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [GenerateTextComponent],
+  imports: [RouterOutlet],
   template: `
     <div>
       <h2>{{ title }}</h2>
-      <app-generate-text />
+      <router-outlet />
     </div>
   `,
   styles: `

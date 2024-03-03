@@ -1,14 +1,7 @@
-import { provideHttpClient } from '@angular/common/http';
 import { bootstrapApplication } from '@angular/platform-browser';
-import { provideMarkdown } from 'ngx-markdown';
+import { Route } from '@angular/router';
+import { appConfig } from '~app/app.config';
 import { AppComponent } from './app/app.component';
-import { provideGeminiApi } from './app/gemini/gemini.provider';
 
-bootstrapApplication(AppComponent, {
-  providers: [
-    provideHttpClient(),
-    provideGeminiApi(),
-    provideMarkdown()
-  ]
-})
+bootstrapApplication(AppComponent, appConfig)
   .catch(err => console.error(err));
