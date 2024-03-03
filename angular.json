@@ -10,7 +10,8 @@
           "style": "scss",
           "inlineStyle": true,
           "inlineTemplate": true,
-          "skipTests": true
+          "skipTests": true,
+          "changeDetection": "OnPush"
         }
       },
       "root": "",
@@ -54,7 +55,8 @@
                   "maximumError": "4kb"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "baseHref": "https://railsstudent.github.io/ng-ai-google-demo/"
             },
             "development": {
               "buildOptimizer": false,
