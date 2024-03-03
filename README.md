@@ -1,6 +1,23 @@
 # NgAiGoogleDemo
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 16.2.1.
+Call Gemini REST API to generate text from text input
+
+# Create new API Key
+
+Go to https://aistudio.google.com/app/apikey to create an API key for a new or existing Google Cloud project
+
+# Replace API Key
+
+- Go to src/app/gemini/gemini.provider.ts
+
+```typescript
+ {
+    provide: GEMINI_API_KEY,
+    useValue: '<api key>',
+},
+```
+
+-  Replace &lt;api key&gt; with the actual Gemini API Key
 
 ## Development server
 
