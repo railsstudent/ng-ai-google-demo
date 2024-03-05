@@ -1,4 +1,3 @@
-import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
@@ -26,11 +25,6 @@ import { GeminiService } from '../services/gemini.service';
       font-size: 1rem;
       padding: 0.75rem;
       border-radius: 4px;
-    }
-
-    button {
-        padding: 0.65rem;
-        border-radius: 8px;
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
