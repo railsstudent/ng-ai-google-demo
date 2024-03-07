@@ -11,7 +11,7 @@ import { GeminiService } from '../services/gemini.service';
   standalone: true,
   imports: [FormsModule, ChatHistoryComponent],
   template: `
-    <h3>Input a prompt to receive an answer from Google Gemini AI</h3>
+    <h3>Input a prompt to receive an answer from the Google Gemini AI</h3>
     <div>
       <textarea rows="8" [(ngModel)]="text"></textarea>
       <button (click)="prompt.set(text)" [disabled]="vm.isLoading">{{ vm.buttonText }}</button>

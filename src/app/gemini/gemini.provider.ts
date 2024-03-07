@@ -59,7 +59,7 @@ export function provideGeminiApi(): EnvironmentProviders {
             provide: GEMINI_PRO_VISION_URL,
             useFactory: () => {
                 const apiKey = inject(GEMINI_API_KEY);
-                return `${genAIBase}/gemini-pro:gemini-pro-vision?key=${apiKey}`;
+                return `${genAIBase}/gemini-pro-vision:generateContent?key=${apiKey}`;
             }
         },
     ]);

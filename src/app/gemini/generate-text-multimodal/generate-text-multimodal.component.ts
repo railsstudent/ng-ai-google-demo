@@ -12,7 +12,7 @@ import { MultimodalInquiry } from '../interfaces/genmini.interface';
   standalone: true,
   imports: [FormsModule, ChatHistoryComponent],
   template: `
-    <h3>Input a prompt to receive an answer from Google Gemini AI</h3>
+    <h3>Input a prompt and select an image to receive an answer from the Google Gemini AI</h3>
     <div class="container">
       <div>
         <label for="fileInput">Select an image:</label>
@@ -62,18 +62,14 @@ export class GenerateTextMultimodalComponent {
   mimeType = signal<string>('');
   askQuestion = signal<MultimodalInquiry | null>(null);
 
-  formData = computed(() => {
-    return {
-      base64Data: this.base64Data(),
-      mimeType: this.mimeType(),
-      prompt: this.prompt(),
-    }
-  });
-
   viewModel = computed(() => ({
     isLoading: this.loading(),
     buttonText: this.loading() ? 'Processing' : 'Ask me anything',
-    formData: this.formData(),
+    formData: {
+      base64Data: this.base64Data(),
+      mimeType: this.mimeType(),
+      prompt: this.prompt(),
+    },
   }));
 
   get vm() {
@@ -102,7 +98,8 @@ export class GenerateTextMultimodalComponent {
     reader.onloadend = () => {
       const fileResult = reader.result;
       if (fileResult && typeof fileResult === 'string') {
-        this.base64Data.set(fileResult);
+        const data = fileResult.substring(`data:${imageFile.type};base64,`.length);
+        this.base64Data.set(data);
         this.mimeType.set(imageFile.type);
       }
     }
