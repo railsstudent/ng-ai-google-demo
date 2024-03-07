@@ -14,7 +14,7 @@ import { GeminiService } from '../services/gemini.service';
     <h3>Input a prompt to receive an answer from Google Gemini AI</h3>
     <div>
       <textarea rows="8" [(ngModel)]="text"></textarea>
-      <button (click)="prompt.set(text)" [disabled]="loading()">{{ buttonText() }}</button>
+      <button (click)="prompt.set(text)" [disabled]="vm.isLoading">{{ vm.buttonText }}</button>
     </div>
     <app-chat-history [chatHistory]="chatHistory()" />
   `,
@@ -35,7 +35,14 @@ export class GenerateTextComponent {
   loading = signal(false);
   text = '';
 
-  buttonText = computed(() => this.loading() ? 'Processing' : 'Ask me anything');
+  viewModel = computed(() => ({
+    isLoading: this.loading(),
+    buttonText: this.loading() ? 'Processing' : 'Ask me anything',
+  }));
+
+  get vm() {
+    return this.viewModel();
+  }
 
   chatHistory = toSignal(toObservable(this.prompt)
     .pipe(
