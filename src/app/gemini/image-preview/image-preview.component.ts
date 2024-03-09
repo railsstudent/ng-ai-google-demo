@@ -4,14 +4,15 @@ import { ImageInfo } from '../interfaces/genmini.interface';
 @Component({
   selector: 'app-image-preview',
   standalone: true,
-  imports: [],
   template: `
     <div>
       <label for="fileInput">Select an image:</label>
       <input id="fileInput" name="fileInput" (change)="fileChange($event)"
         alt="image input" type="file" accept=".jpg,.jpeg,.png" />
     </div>
-    <img [src]="imageInfo().base64DataURL" [alt]="imageInfo().filename" />
+    @if(imageInfo().base64DataURL) {
+      <img [src]="imageInfo().base64DataURL" [alt]="imageInfo().filename" width="250" height="250" />
+    }
   `,
   styles: `
     input[type="file"] {
@@ -20,6 +21,10 @@ import { ImageInfo } from '../interfaces/genmini.interface';
 
     label {
       margin-right: 0.5rem;
+    }
+
+    img {
+      object-fit: contain;
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush

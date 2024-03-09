@@ -17,7 +17,7 @@ import { GeminiService } from '../services/gemini.service';
     <h3>Input a prompt and select an image to receive an answer from the Google Gemini AI</h3>
     <div class="container">
       <app-image-preview class="image-preview" (imageChange)="imageInfo.set($event)" />
-      <app-prompt-box  [loading]="loading()" [(prompt)]="prompt" (sendPrompt)="isClicked$.next()" />
+      <app-prompt-box [loading]="loading()" [(prompt)]="prompt" (sendPrompt)="isClicked$.next()" />
     </div>
     <app-chat-history [chatHistory]="chatHistory()" />
   `,
