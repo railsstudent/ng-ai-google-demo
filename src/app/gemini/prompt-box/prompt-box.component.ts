@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Output, computed, input, model } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -8,9 +8,7 @@ import { FormsModule } from '@angular/forms';
   template: `
     <div>
       <textarea rows="3" [(ngModel)]="prompt"></textarea>
-      <!--
-      <button (click)="askQuestion.set(vm.formData)" [disabled]="vm.isLoading">{{ vm.buttonText }}</button>
--->
+      <button (click)="sendPrompt.emit(prompt())" [disabled]="vm.isLoading">{{ vm.buttonText }}</button>
     </div>
   `,
   styles: `
@@ -25,5 +23,18 @@ import { FormsModule } from '@angular/forms';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class PromptBoxComponent {
-  prompt = signal('');
+  prompt = model.required<string>();
+  loading = input.required<boolean>();
+
+  viewModel = computed(() => ({
+    isLoading: this.loading(),
+    buttonText: this.loading() ? 'Processing' : 'Ask me anything',
+  }));
+
+  get vm() {
+    return this.viewModel();
+  }
+
+  @Output()
+  sendPrompt = new EventEmitter<string>();
 }
