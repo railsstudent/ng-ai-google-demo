@@ -13,6 +13,12 @@ export interface GeminiSafetySetting {
     threshold: THRESHOLD
 }
 
+export interface ImageInfo {
+    base64DataURL: string;
+    base64Data: string;
+    mimeType: string;
+} 
+
 export interface MultimodalInquiry {
     base64Data: string;
     mimeType: string;

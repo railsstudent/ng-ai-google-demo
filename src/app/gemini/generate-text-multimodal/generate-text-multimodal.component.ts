@@ -5,12 +5,14 @@ import { filter, finalize, map, scan, switchMap, tap } from 'rxjs';
 import { ChatHistoryComponent } from '../chat-history/chat-history.component';
 import { HistoryItem } from '../interfaces/history-item.interface';
 import { GeminiService } from '../services/gemini.service';
-import { MultimodalInquiry } from '../interfaces/genmini.interface';
+import { ImageInfo, MultimodalInquiry } from '../interfaces/genmini.interface';
+import { ImagePreviewComponent } from '../image-preview/image-preview.component';
+import { PromptBoxComponent } from '../prompt-box/prompt-box.component';
 
 @Component({
   selector: 'app-generate-text-multimodal',
   standalone: true,
-  imports: [FormsModule, ChatHistoryComponent],
+  imports: [FormsModule, ChatHistoryComponent, ImagePreviewComponent, PromptBoxComponent],
   template: `
     <h3>Input a prompt and select an image to receive an answer from the Google Gemini AI</h3>
     <div class="container">
@@ -19,14 +21,16 @@ import { MultimodalInquiry } from '../interfaces/genmini.interface';
         <input id="fileInput" name="fileInput" (change)="fileChange($event)"
           alt="image input" type="file" accept=".jpg,.jpeg,.png" />
       </div>
+      <app-image-preview class="image-preview" />
       <div>
-        <textarea rows="8" [(ngModel)]="prompt"></textarea>
+        <textarea rows="3" [(ngModel)]="prompt"></textarea>
         <button (click)="askQuestion.set(vm.formData)" [disabled]="vm.isLoading">{{ vm.buttonText }}</button>
       </div>
+      <app-prompt-box />
     </div>
     <app-chat-history [chatHistory]="chatHistory()" />
   `,
-  styles: `
+  styles: `    
     h3 {
       margin-bottom: 1rem;
     }
@@ -40,7 +44,7 @@ import { MultimodalInquiry } from '../interfaces/genmini.interface';
       margin-right: 0.5rem;
     }
 
-    input[type="file"] {
+    input[type="file"], .image-preview {
       margin-bottom: 0.75rem;
     }
 
@@ -58,16 +62,19 @@ export class GenerateTextMultimodalComponent {
   geminiService = inject(GeminiService);
   prompt = signal('');
   loading = signal(false);
-  base64Data = signal<string>('');
-  mimeType = signal<string>('');
   askQuestion = signal<MultimodalInquiry | null>(null);
+  imageInfo = signal<ImageInfo>({
+    base64DataURL: '',
+    base64Data: '',
+    mimeType: '',
+  })
 
   viewModel = computed(() => ({
     isLoading: this.loading(),
     buttonText: this.loading() ? 'Processing' : 'Ask me anything',
     formData: {
-      base64Data: this.base64Data(),
-      mimeType: this.mimeType(),
+      base64Data: this.imageInfo().base64Data,
+      mimeType: this.imageInfo().mimeType,
       prompt: this.prompt(),
     },
   }));
@@ -99,8 +106,11 @@ export class GenerateTextMultimodalComponent {
       const fileResult = reader.result;
       if (fileResult && typeof fileResult === 'string') {
         const data = fileResult.substring(`data:${imageFile.type};base64,`.length);
-        this.base64Data.set(data);
-        this.mimeType.set(imageFile.type);
+        this.imageInfo.set({
+          base64DataURL: fileResult,
+          base64Data: data,
+          mimeType: imageFile.type
+        });
       }
     }
   }
