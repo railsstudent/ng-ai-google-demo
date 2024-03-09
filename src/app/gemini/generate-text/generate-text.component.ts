@@ -1,21 +1,19 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
-import { toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
-import { filter, finalize, scan, switchMap, tap } from 'rxjs';
+import { Subject, filter, finalize, scan, switchMap, tap } from 'rxjs';
 import { ChatHistoryComponent } from '../chat-history/chat-history.component';
 import { HistoryItem } from '../interfaces/history-item.interface';
+import { PromptBoxComponent } from '../prompt-box/prompt-box.component';
 import { GeminiService } from '../services/gemini.service';
 
 @Component({
   selector: 'app-generate-text',
   standalone: true,
-  imports: [FormsModule, ChatHistoryComponent],
+  imports: [FormsModule, ChatHistoryComponent, PromptBoxComponent],
   template: `
     <h3>Input a prompt to receive an answer from the Google Gemini AI</h3>
-    <div>
-      <textarea rows="8" [(ngModel)]="text"></textarea>
-      <button (click)="prompt.set(text)" [disabled]="vm.isLoading">{{ vm.buttonText }}</button>
-    </div>
+    <app-prompt-box [loading]="loading()" [(prompt)]="prompt" (sendPrompt)="isClicked$.next()" />
     <app-chat-history [chatHistory]="chatHistory()" />
   `,
   styles: `
@@ -33,23 +31,15 @@ export class GenerateTextComponent {
   geminiService = inject(GeminiService);
   prompt = signal('');
   loading = signal(false);
-  text = '';
 
-  viewModel = computed(() => ({
-    isLoading: this.loading(),
-    buttonText: this.loading() ? 'Processing' : 'Ask me anything',
-  }));
+  isClicked$ = new Subject<void>();
 
-  get vm() {
-    return this.viewModel();
-  }
-
-  chatHistory = toSignal(toObservable(this.prompt)
+  chatHistory = toSignal(this.isClicked$
     .pipe(
-      filter((prompt) => prompt !== ''),
+      filter(() => this.prompt() !== ''),
       tap(() => this.loading.set(true)),
       switchMap((prompt) => 
-        this.geminiService.generateText(prompt).pipe(finalize(() => this.loading.set(false)))
+        this.geminiService.generateText(this.prompt()).pipe(finalize(() => this.loading.set(false)))
       ),
       scan((acc, response) => acc.concat({ prompt: this.prompt(), response }), [] as HistoryItem[]),
     ), { initialValue: [] as HistoryItem[] });

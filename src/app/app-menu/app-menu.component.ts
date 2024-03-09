@@ -9,7 +9,7 @@ import { RouterLink } from '@angular/router';
     <div class="menu-container">
       <ul class="menu">
         <li><a routerLink="/">Generate Text from Text Input</a></li>
-        <li><a routerLink="/text-multimodal">Generate Text from Text and Image Inputs (WIP)</a></li>
+        <li><a routerLink="/text-multimodal">Generate Text from Text and Image Inputs</a></li>
       </ul>
     </div>
   `,
