@@ -11,9 +11,7 @@ import { ImageInfo } from '../interfaces/genmini.interface';
       <input id="fileInput" name="fileInput" (change)="fileChange($event)"
         alt="image input" type="file" accept=".jpg,.jpeg,.png" />
     </div>
-    <p>
-      image-preview works!
-    </p>
+    <img [src]="imageInfo().base64DataURL" [alt]="imageInfo().filename" />
   `,
   styles: `
     input[type="file"] {
@@ -31,6 +29,7 @@ export class ImagePreviewComponent {
     base64DataURL: '',
     base64Data: '',
     mimeType: '',
+    filename: '',
   });
 
   @Output()
@@ -51,7 +50,8 @@ export class ImagePreviewComponent {
         this.imageInfo.set({
           base64DataURL: fileResult,
           base64Data: data,
-          mimeType: imageFile.type
+          mimeType: imageFile.type,
+          filename: imageFile.name
         });
         this.imageChange.emit(this.imageInfo());
       }

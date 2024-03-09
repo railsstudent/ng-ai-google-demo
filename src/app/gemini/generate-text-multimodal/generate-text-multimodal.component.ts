@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Subject, filter, finalize, scan, switchMap, tap } from 'rxjs';
 import { ChatHistoryComponent } from '../chat-history/chat-history.component';
 import { ImagePreviewComponent } from '../image-preview/image-preview.component';
-import { ImageInfo } from '../interfaces/genmini.interface';
+import { ImageInfo, MultimodalInquiry } from '../interfaces/genmini.interface';
 import { HistoryItem } from '../interfaces/history-item.interface';
 import { PromptBoxComponent } from '../prompt-box/prompt-box.component';
 import { GeminiService } from '../services/gemini.service';
@@ -41,16 +41,12 @@ export class GenerateTextMultimodalComponent {
   geminiService = inject(GeminiService);
   prompt = signal('');
   loading = signal(false);
-  imageInfo = signal<ImageInfo>({
-    base64DataURL: '',
-    base64Data: '',
-    mimeType: '',
-  });
+  imageInfo = signal<ImageInfo | null>(null);
 
   askQuestion = computed(() => {
     return {
-      base64Data: this.imageInfo().base64Data,
-      mimeType: this.imageInfo().mimeType,
+      base64Data: this.imageInfo()?.base64Data,
+      mimeType: this.imageInfo()?.mimeType,
       prompt: this.prompt(),   
     }
   })
@@ -70,8 +66,8 @@ export class GenerateTextMultimodalComponent {
     .pipe(
       filter(() => this.askQuestion().prompt !== '' && !!this.askQuestion().base64Data),
       tap(() => this.loading.set(true)),
-      switchMap((inquiry) => 
-        this.geminiService.generateTextFromMultimodal(this.askQuestion())
+      switchMap(() => 
+        this.geminiService.generateTextFromMultimodal(this.askQuestion() as MultimodalInquiry)
           .pipe(finalize(() => this.loading.set(false)))
       ),
       scan((acc, response) => acc.concat({ prompt: this.prompt(), response }), [] as HistoryItem[]),

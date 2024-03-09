@@ -8,7 +8,7 @@ import { FormsModule } from '@angular/forms';
   template: `
     <div>
       <textarea rows="3" [(ngModel)]="prompt"></textarea>
-      <button (click)="sendPrompt.emit(prompt())" [disabled]="vm.isLoading">{{ vm.buttonText }}</button>
+      <button (click)="sendPrompt.emit()" [disabled]="vm.isLoading">{{ vm.buttonText }}</button>
     </div>
   `,
   styles: `
@@ -36,5 +36,5 @@ export class PromptBoxComponent {
   }
 
   @Output()
-  sendPrompt = new EventEmitter<string>();
+  sendPrompt = new EventEmitter<void>();
 }
