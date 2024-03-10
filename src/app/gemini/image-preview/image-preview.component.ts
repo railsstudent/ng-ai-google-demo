@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Output, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, model } from '@angular/core';
 import { ImageInfo } from '../interfaces/genmini.interface';
 
 @Component({
@@ -10,8 +10,8 @@ import { ImageInfo } from '../interfaces/genmini.interface';
       <input id="fileInput" name="fileInput" (change)="fileChange($event)"
         alt="image input" type="file" accept=".jpg,.jpeg,.png" />
     </div>
-    @if(imageInfo().base64DataURL) {
-      <img [src]="imageInfo().base64DataURL" [alt]="imageInfo().filename" width="250" height="250" />
+    @if(imageInfo(); as imageInfo) {
+      <img [src]="imageInfo.base64DataURL" [alt]="imageInfo.filename" width="250" height="250" />
     }
   `,
   styles: `
@@ -30,15 +30,7 @@ import { ImageInfo } from '../interfaces/genmini.interface';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ImagePreviewComponent {
-  imageInfo = signal<ImageInfo>({
-    base64DataURL: '',
-    base64Data: '',
-    mimeType: '',
-    filename: '',
-  });
-
-  @Output()
-  imageChange = new EventEmitter<ImageInfo>();
+  imageInfo = model.required<ImageInfo | null>();
   
   fileChange(event: any) {
     const imageFile: File | undefined = event.target.files?.[0];
@@ -58,7 +50,6 @@ export class ImagePreviewComponent {
           mimeType: imageFile.type,
           filename: imageFile.name
         });
-        this.imageChange.emit(this.imageInfo());
       }
     }
   }

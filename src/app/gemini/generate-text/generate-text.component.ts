@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Subject, filter, finalize, scan, switchMap, tap } from 'rxjs';
@@ -13,7 +13,7 @@ import { GeminiService } from '../services/gemini.service';
   imports: [FormsModule, ChatHistoryComponent, PromptBoxComponent],
   template: `
     <h3>Input a prompt to receive an answer from the Google Gemini AI</h3>
-    <app-prompt-box [loading]="loading()" [(prompt)]="prompt" (sendPrompt)="isClicked$.next()" />
+    <app-prompt-box [loading]="loading()" [(prompt)]="prompt" (askMe)="isClicked$.next()" />
     <app-chat-history [chatHistory]="chatHistory()" />
   `,
   styles: `
