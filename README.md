@@ -2,6 +2,8 @@
 
 Call Gemini REST API to generate text from text input
 
+Google Cloud credits are provided for this project. #GeminiSprint hashtag.
+
 # Create new API Key
 
 Go to https://aistudio.google.com/app/apikey to create an API key for a new or existing Google Cloud project
