@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, EventEmitter, Output, input } from '@angular/core';
 import { MarkdownComponent } from 'ngx-markdown';
 import { HistoryItem } from '../interfaces/history-item.interface';
 import { LineBreakPipe } from '../pipes/line-break.pipe';
@@ -10,14 +10,16 @@ import { LineBreakPipe } from '../pipes/line-break.pipe';
   template: `
     <h3>Chat History</h3>
     @if (chatHistory().length > 0) {
-      <ol>
-        @for (history of chatHistory(); track history) {
-          <li>
-            <p>{{ history.prompt }}</p>
-            <markdown [data]="lineBreakPipe.transform(history.response)" />
-          </li>
-        }
-      </ol>
+      <div class="scrollable-list">
+        <ol>
+          @for (history of chatHistory(); track history) {
+            <li>
+              <p>{{ history.prompt }}</p>
+              <markdown [data]="lineBreakPipe.transform(history.response)" />
+            </li>
+          }
+        </ol>
+      </div>
     } @else {
       <p>No history</p>
     }
@@ -29,6 +31,11 @@ import { LineBreakPipe } from '../pipes/line-break.pipe';
 
     ol {
       margin: 1rem;
+    }
+
+    .scrollable-list {
+      height: 500px; /* Define the height of the container */
+      overflow-y: scroll; /* Enable vertical scrolling */
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
