@@ -1,6 +1,8 @@
 # NgAiGoogleDemo
 
-Call Gemini REST API to generate text from text input
+Call Gemini REST API to generate text from text input and image
+
+Github Page: https://railsstudent.github.io/ng-ai-google-demo/
 
 Google Cloud credits are provided for this project. #GeminiSprint hashtag.
 
