@@ -1,5 +1,6 @@
 import { AsyncPipe } from '@angular/common';
 import { ChangeDetectionStrategy, Component, OnInit, computed, inject, signal, viewChild } from '@angular/core';
+import { outputToObservable } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { Observable, filter, finalize, scan, startWith, switchMap, tap } from 'rxjs';
 import { ChatHistoryComponent } from '../chat-history/chat-history.component';
@@ -67,7 +68,7 @@ export class GenerateTextMultimodalComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.chatHistory$ = this.promptBox().askMe
+    this.chatHistory$ = outputToObservable(this.promptBox().askMe)
       .pipe(
         filter(() => this.vm.prompt !== '' && !!this.vm.base64Data),
         tap(() => this.loading.set(true)),
