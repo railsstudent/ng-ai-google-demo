@@ -43,7 +43,7 @@ export class GenerateTextComponent implements OnInit {
       .pipe(
         filter(() => this.prompt() !== ''),
         tap(() => this.loading.set(true)),
-        switchMap((prompt) => 
+        switchMap(() => 
           this.geminiService.generateText(this.prompt()).pipe(finalize(() => this.loading.set(false)))
         ),
         scan((acc, response) => acc.concat({ prompt: this.prompt(), response }), [] as HistoryItem[]),
