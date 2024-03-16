@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Output, computed, input, model } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, model, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -35,6 +35,5 @@ export class PromptBoxComponent {
     return this.viewModel();
   }
 
-  @Output()
-  askMe = new EventEmitter<void>();
+  askMe = output();
 }
