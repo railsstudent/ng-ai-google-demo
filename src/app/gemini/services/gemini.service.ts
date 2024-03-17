@@ -1,8 +1,7 @@
-import { GEMINI_PRO_VISION_URL } from './../gemini.constant';
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, catchError, map, of, retry, tap } from 'rxjs';
-import { GEMINI_GENERATION_CONFIG, GEMINI_PRO_URL, GEMINI_SAFETY_SETTINGS } from '../gemini.constant';
+import { GEMINI_GENERATION_CONFIG, GEMINI_PRO_URL, GEMINI_PRO_VISION_URL, GEMINI_SAFETY_SETTINGS } from '../gemini.constant';
 import { GeminiResponse } from '../interfaces/generate-response.interface';
 import { MultimodalInquiry } from '../interfaces/genmini.interface';
 
