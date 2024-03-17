@@ -1,6 +1,7 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { Observable, catchError, map, of, retry, tap } from 'rxjs';
+import { Observable } from 'rxjs';
+import { generateText } from '../custom-operators/generate-text.operator';
 import { GEMINI_GENERATION_CONFIG, GEMINI_PRO_URL, GEMINI_PRO_VISION_URL, GEMINI_SAFETY_SETTINGS } from '../gemini.constant';
 import { GeminiResponse } from '../interfaces/generate-response.interface';
 import { MultimodalInquiry } from '../interfaces/genmini.interface';
@@ -34,15 +35,7 @@ export class GeminiService {
         "Content-Type": "application/json"
       }
     })
-    .pipe(
-      retry(3),
-      tap((response) => console.log(response)),
-      map((response) => response.candidates?.[0].content?.parts?.[0].text || 'No response' ),
-      catchError((err) => {
-        console.error(err);
-        return of('Error occurs');
-      })
-    );
+    .pipe(generateText(3));
   }
   
   generateTextFromMultimodal({ prompt, mimeType, base64Data }: MultimodalInquiry): Observable<string> {
@@ -70,14 +63,6 @@ export class GeminiService {
         "Content-Type": "application/json"
       }
     })
-    .pipe(
-      retry(3),
-      tap((response) => console.log(response)),
-      map((response) => response.candidates?.[0].content?.parts?.[0].text || 'No response' ),
-      catchError((err) => {
-        console.error(err);
-        return of('Error occurs');
-      })
-    );
+    .pipe(generateText(3));
   }
 }
