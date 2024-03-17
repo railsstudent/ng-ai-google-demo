@@ -17,7 +17,7 @@ export function provideGeminiApi(): EnvironmentProviders {
             provide: GEMINI_GENERATION_CONFIG,
             useValue: {
                 "maxOutputTokens": 1024,
-                "temperature": 0.5,
+                "temperature": 0.2,
                 "topP": 0.5,
                 "topK": 3
             },
